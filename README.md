@@ -1,2 +1,2 @@
 # Starlite
-A basic discord moderation bot
+A basic web browser made entirely in python
