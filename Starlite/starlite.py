@@ -37,21 +37,14 @@ class SimpleBrowser(QMainWindow):
         new_tab_btn.triggered.connect(lambda: self.add_new_tab(QUrl('https://www.google.com'), 'New Tab'))
         tabs_toolbar.addAction(new_tab_btn)
 
-        back_btn = QAction('Back', self)
-        back_btn.triggered.connect(self.current_browser.back)
-        nav_toolbar.addAction(back_btn)
-
-        forward_btn = QAction('Forward', self)
-        forward_btn.triggered.connect(self.current_browser.forward)
-        nav_toolbar.addAction(forward_btn)
-
-        reload_btn = QAction('Reload', self)
-        reload_btn.triggered.connect(self.current_browser.reload)
-        nav_toolbar.addAction(reload_btn)
+        self.add_button(nav_toolbar, '🔙', self.current_browser.back)
+        self.add_button(nav_toolbar, '⏩', self.current_browser.forward)
+        self.add_button(nav_toolbar, '🔄️', self.current_browser.reload)
 
         add_bookmark_btn = QAction('★', self)
         add_bookmark_btn.setToolTip('Bookmark this page')
         add_bookmark_btn.triggered.connect(self.toggle_bookmark)
+
         nav_toolbar.addAction(add_bookmark_btn)
         self.bookmark_star = add_bookmark_btn
 
@@ -65,6 +58,11 @@ class SimpleBrowser(QMainWindow):
 
         self.update_navigation()
         self.update_bookmark_star()
+    
+    def add_button(self, nav_toolbar, text, action):
+        forward_btn = QAction(text, self)
+        forward_btn.triggered.connect(action)
+        nav_toolbar.addAction(forward_btn)
 
     @property
     def current_browser(self):
@@ -83,7 +81,7 @@ class SimpleBrowser(QMainWindow):
         if self.tabs.count() > 1:
             self.tabs.removeTab(index)
         else:
-            self.close()  # Close the entire browser if it's the last tab
+            self.close()
 
     def update_tab_title(self, browser, url=None, title=None):
         index = self.tabs.indexOf(browser)
@@ -96,7 +94,6 @@ class SimpleBrowser(QMainWindow):
         browser = self.current_browser
         if browser:
             self.url_bar.setText(browser.url().toString())
-            # Disconnect previous connection if it exists
             try:
                 browser.urlChanged.disconnect(self.update_url_bar)
             except:
